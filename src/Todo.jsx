@@ -1,18 +1,51 @@
 import { useState } from "react";
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 export default function Todo()
 {
-    let [todos,seTodo]=useState([]);
+    let [todos,seTodo]=useState([{task:"sample text",id:uuidv4()}]);
     let [newTodo,setNewTodo]=useState("");
 
     let addNewTask=()=>
     {
-        seTodo([...todos,newTodo]);
+        seTodo((prevTodo)=>
+        {
+           return [...prevTodo,{task:newTodo,id:uuidv4()}];
+        });
         setNewTodo("");
     }
     let updateValue=(event)=>{
         setNewTodo(event.target.value);
     }
+    let todoDelete=(id)=>{
+        seTodo((prevTodos)=>prevTodos.filter((prevTodos)=>prevTodos.id!=id));
+    }
+let UpperCaseAll = () => {
+    seTodo(
+        todos.map((todo) => {
+        return {
+            ...todo,
+            task: todo.task.toUpperCase(),
+        };
+    }));
+};
+
+   let OneUpdate=(id)=>{
+      seTodo(
+        todos.map((todo) => {
+        if(todo.id==id)
+        {
+            return {
+            ...todo,
+            task: todo.task.toUpperCase(),
+           };
+        }
+        else{
+            return todo;
+        }
+    }));
+   }
+
+
     return(
        <div>
         Enter the Value:
@@ -28,10 +61,19 @@ export default function Todo()
             {
             todos.map
                 (
-                (todo)=>(<li>{todo}</li>)
+                (todo)=>
+                (
+                    <li key={todo.id}>
+                        <span>{todo.task}</span>
+                        &nbsp;  &nbsp;  &nbsp; 
+                        <button onClick={()=>todoDelete(todo.id)}>Delete</button>
+                        <button onClick={()=>OneUpdate(todo.id)}>UpperCase One</button>
+                    </li>
+                )
                 )
                 }
         </ul>
+        <button onClick={UpperCaseAll}>Upper case all</button>
        </div>
     );
 }
